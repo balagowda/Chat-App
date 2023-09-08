@@ -1,14 +1,51 @@
 import React, { useState } from 'react';
 import '../Styles/auth.css';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const SignUp = () => {
 
   const [input,setInput] = useState({fullName:"",email:"",password:"",cpassword:""});
 
-  const handleSubmit = ()=>{
+  const navigate = useNavigate();
 
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { fullName, email, password, cpassword } = input;
+
+    const res = await fetch("/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        fullName,
+        email,
+        password,
+        cpassword,
+      }),
+    });
+
+    const reply = await res.json();
+    // console.log(reply);
+
+    if (res.status === 422 || !input) {
+      toast.warn(reply.error, {
+        position: "top-center",
+        });
+    
+    } else {
+      navigate('/signin');
+      setInput({
+        ...input,
+        fullName: "",
+        email: "",
+        password: "",
+        cpassword: "",
+      });
+    }
+  };
 
   const handleChange = (e) => {
     const {name,value} = e.target;
@@ -81,6 +118,7 @@ const SignUp = () => {
         </div>
       </div>
       <div className="round-2"></div>
+      <ToastContainer/>
     </div>
   )
 }

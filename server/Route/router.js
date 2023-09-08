@@ -2,13 +2,14 @@ const express = require("express");
 const router = express.Router();
 const User = require("../db/models/userSchema");
 const Authenticate = require('../db/auth');
+const bcrypt = require("bcryptjs");
 
 //User Registration
 
 router.post("/register", async (req, res) => {
-  const { fname, email, password, cpassword } = req.body;
+  const { fullName, email, password, cpassword } = req.body;
 
-  if (!fname || !email || !password || !cpassword) {
+  if (!fullName || !email || !password || !cpassword) {
     res.status(422).json({ error: "Fill all the feild" });
   }
 
@@ -21,7 +22,7 @@ router.post("/register", async (req, res) => {
       res.status(422).json({ error: "Password doesn't matches" });
     } else {
       const createUser = new User({
-        fname,
+        fullName,
         email,
         password,
         cpassword,
@@ -38,14 +39,14 @@ router.post("/register", async (req, res) => {
 //User Login
 
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  const { userName, password } = req.body;
 
-  if (!email || !password) {
+  if (!userName || !password) {
     res.status(422).json({ error: "Fill all the feild" });
   }
 
   try {
-    const userLogin = await User.findOne({ email: email });
+    const userLogin = await User.findOne({ email: userName });
 
     if (userLogin) {
       const isMatch = await bcrypt.compare(password, userLogin.password);

@@ -1,9 +1,45 @@
 import React, { useState } from "react";
 import "../Styles/auth.css";
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const SignIn = () => {
   const [input, setInput] = useState({ userName: "", password: "" });
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { userName, password } = input;
+
+    const res = await fetch("/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userName,
+        password,
+      }),
+    });
+
+    const reply = await res.json();
+
+    if (res.status === 422 || !input) {
+      toast.warn(reply.error, {
+        position: "top-center",
+      });
+    } else {
+      navigate("/chat");
+      
+      setInput({
+        ...input,
+        userName: "",
+        password: "",
+      });
+    }
+  }
 
   const handleChange = (e) => {
     const {name,value} = e.target;
@@ -13,8 +49,6 @@ const SignIn = () => {
       [name]:value
     }))
   };
-
-  const handleSubmit = () => {};
 
   return (
     <div className="auth-container">
@@ -54,6 +88,7 @@ const SignIn = () => {
         </div>
       </div>
       <div className="round-2"></div>
+      <ToastContainer/>
     </div>
   );
 };
