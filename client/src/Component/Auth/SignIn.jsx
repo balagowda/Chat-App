@@ -3,9 +3,13 @@ import "../Styles/auth.css";
 import {Link, useNavigate} from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useContext } from "react";
+import { LoginContext } from "../Context/context";
 
 const SignIn = () => {
   const [input, setInput] = useState({ userName: "", password: "" });
+
+  const {account,setAccount} = useContext(LoginContext);
 
   const navigate = useNavigate();
 
@@ -25,14 +29,15 @@ const SignIn = () => {
     });
 
     const reply = await res.json();
+    console.log(reply);
 
     if (res.status === 422 || !input) {
       toast.warn(reply.error, {
         position: "top-center",
       });
     } else {
+      setAccount(reply);
       navigate("/chat");
-      
       setInput({
         ...input,
         userName: "",
@@ -56,7 +61,7 @@ const SignIn = () => {
         <h2 className="auth-header">Login</h2>
         <div className="auth-form-login">
           <form onSubmit={handleSubmit} className="auth-form-login">
-            <div class="input-container">
+            <div className="input-container">
               <input
                 type="email"
                 placeholder="email"
@@ -67,7 +72,7 @@ const SignIn = () => {
               <label>User Name</label>
             </div>
             <br />
-            <div class="input-container">
+            <div className="input-container">
               <input
                 type="password"
                 placeholder="password"
