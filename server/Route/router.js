@@ -1,8 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../db/models/userSchema");
-const Authenticate = require('../db/auth');
+const Authenticate = require("../db/auth");
 const bcrypt = require("bcryptjs");
+const { default: axios } = require("axios");
+const chatKey = process.env.CHAT_KEY;
 
 //User Registration
 
@@ -62,7 +64,23 @@ router.post("/login", async (req, res) => {
           httpOnly: true,
         });
 
-        res.status(201).json({ message: "login Success" });
+        try {
+          const resp = await axios.put(
+            "https://api.chatengine.io/users/",
+            {
+              username: userLogin.fullName,
+              secret: userLogin._id,
+              first_name: userLogin.fullName 
+            },
+            {
+              headers: { "Private-Key": chatKey },
+            }
+          );
+          res.status(resp.status).json(resp.data);
+        } catch (error) {
+          console.log(error);
+          res.status(422).json({ error: error.message });
+        }
       }
     } else {
       res.status(422).json({ error: "No user Found" });
@@ -74,35 +92,31 @@ router.post("/login", async (req, res) => {
 
 //finding user function
 
-router.get('/userdata',Authenticate,async(req,res)=>{
-    try {
-  
-      const getUser = await User.findOne({_id:req.userID});
-      // console.log(buyUser);
-      res.status(201).json(getUser);
-      
-    } catch (error) {
-      console.log(error.message);
-    }
-  });
-  
-  //Logout user
-  
-  router.get('/logout',Authenticate,(req,res)=>{
-    try {
-      req.rootUser.tokens = req.rootUser.tokens.filter((cruval) => {
-          return cruval.token !== req.token
-      });
-  
-      res.clearCookie("routeProject", { path: "/" });
-      req.rootUser.save();
-      res.status(201).json(req.rootUser.tokens);
-      console.log("user logout");
-  
+router.get("/userdata", Authenticate, async (req, res) => {
+  try {
+    const getUser = await User.findOne({ _id: req.userID });
+    // console.log(buyUser);
+    res.status(201).json(getUser);
   } catch (error) {
-      console.log(error + "error in user logout");
+    console.log(error.message);
   }
-  });
-  
+});
+
+//Logout user
+
+router.get("/logout", Authenticate, (req, res) => {
+  try {
+    req.rootUser.tokens = req.rootUser.tokens.filter((cruval) => {
+      return cruval.token !== req.token;
+    });
+
+    res.clearCookie("routeProject", { path: "/" });
+    req.rootUser.save();
+    res.status(201).json(req.rootUser.tokens);
+    console.log("user logout");
+  } catch (error) {
+    console.log(error + "error in user logout");
+  }
+});
 
 module.exports = router;
