@@ -92,7 +92,6 @@ const SignIn = () => {
           </form>
         </div>
       </div>
-      <div className="round-2"></div>
       <ToastContainer/>
     </div>
   );

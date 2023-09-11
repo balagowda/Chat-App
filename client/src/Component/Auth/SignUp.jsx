@@ -64,7 +64,7 @@ const SignUp = () => {
         </h2>
         <div className="auth-form-signup">
           <form onSubmit={handleSubmit} className="auth-form-login">
-          <div class="input-container">
+          <div className="input-container">
               <input
                 type="text"
                 placeholder="fullName"
@@ -75,7 +75,7 @@ const SignUp = () => {
               <label>Full Name</label>
             </div>
             <br />
-            <div class="input-container">
+            <div className="input-container">
               <input
                 type="email"
                 placeholder="email"
@@ -86,7 +86,7 @@ const SignUp = () => {
               <label>Email</label>
             </div>
             <br />
-            <div class="input-container">
+            <div className="input-container">
               <input
                 type="password"
                 placeholder="password"
@@ -117,7 +117,6 @@ const SignUp = () => {
           </form>
         </div>
       </div>
-      <div className="round-2"></div>
       <ToastContainer/>
     </div>
   )
