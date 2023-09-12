@@ -97,7 +97,7 @@ const SignUp = () => {
               <label>Password</label>
             </div>
             <br />
-            <div class="input-container">
+            <div className="input-container">
               <input
                 type="password"
                 placeholder="cpassword"

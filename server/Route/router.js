@@ -69,7 +69,7 @@ router.post("/login", async (req, res) => {
             "https://api.chatengine.io/users/",
             {
               username: userLogin.fullName,
-              secret: userLogin._id,
+              secret: userLogin.fullName,
               first_name: userLogin.fullName 
             },
             {

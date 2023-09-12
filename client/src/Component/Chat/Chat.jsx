@@ -7,6 +7,7 @@ import { LoginContext } from "../Context/context";
 const Chat = () => {
 
   const {account,setAccount} = useContext(LoginContext);
+  console.log(account);
 
   return (
     <div className="chatWindow">
